@@ -30,3 +30,6 @@ Thumbs.db
 *.log
 .idea/
 .vscode/
+
+# 남의 저장소(복제본) 제외
+katfishnet/
