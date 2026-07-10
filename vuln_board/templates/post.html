@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block body %}
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">게시판</div>
+      <nav class="sidebar-nav">
+        <a href="/"><span class="icon">🏠</span> 홈</a>
+        <a href="/board" class="active"><span class="icon">📋</span> 게시판</a>
+        <a href="/write"><span class="icon">✏️</span> 글쓰기</a>
+        <a href="/search"><span class="icon">🔍</span> 검색</a>
+      </nav>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">게시글 정보</div>
+      <div class="sidebar-stat">
+        <div class="stat-row">
+          <span class="stat-label">작성자</span>
+          <span class="stat-value">{{ post.author }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">조회수</span>
+          <span class="stat-value">{{ post.views }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">분류</span>
+          <span class="stat-value">{{ post.category }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">작성일</span>
+          <span class="stat-value" style="font-size:.78rem;">{{ post.created_at[:10] }}</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header" style="display:block;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span class="tag blue">{{ post.category }}</span>
+          <span style="font-size:.78rem;color:var(--slate-400);">No.{{ post.id }}</span>
+        </div>
+        <h1 style="font-size:1.25rem;font-weight:800;color:var(--slate-900);
+                   line-height:1.4;margin-bottom:6px;">{{ post.title }}</h1>
+        <div style="display:flex;align-items:center;gap:16px;font-size:.82rem;color:var(--slate-400);">
+          <span style="font-weight:600;color:var(--slate-600);">{{ post.author }}</span>
+          <span>{{ post.created_at[:16].replace('T', ' ') }}</span>
+          <span>조회 {{ post.views }}</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div style="min-height:120px;line-height:1.8;color:var(--slate-700);
+                    font-size:.93rem;white-space:pre-wrap;">{{ post.content | safe }}</div>
+      </div>
+      <div style="padding:12px 22px;border-top:1px solid var(--slate-100);
+                  display:flex;justify-content:space-between;align-items:center;">
+        <a href="/board" class="btn btn-ghost btn-sm">← 목록으로</a>
+        <div style="display:flex;gap:8px;">
+          {% if user %}
+          <a href="/write" class="btn btn-primary btn-sm">글쓰기</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">댓글 {{ comments|length }}개</span>
+      </div>
+
+      {% if comments %}
+      <ul class="post-list">
+        {% for c in comments %}
+        <li style="padding:14px 22px;border-bottom:1px solid var(--slate-100);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+            <div style="width:28px;height:28px;background:var(--blue-100);border-radius:50%;
+                        display:flex;align-items:center;justify-content:center;
+                        font-size:.72rem;font-weight:700;color:var(--blue-700);">
+              {{ c.author[0].upper() }}
+            </div>
+            <span style="font-weight:600;font-size:.85rem;color:var(--slate-700);">{{ c.author }}</span>
+            <span style="font-size:.75rem;color:var(--slate-400);">{{ c.created_at[:16] }}</span>
+          </div>
+          <div style="font-size:.88rem;color:var(--slate-700);
+                      padding-left:38px;line-height:1.6;">{{ c.content | safe }}</div>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      {% if user %}
+      <div style="padding:16px 22px;border-top:1px solid var(--slate-100);">
+        <form method="POST" action="/post/{{ post.id }}/comment">
+          <div style="display:flex;gap:10px;align-items:flex-end;">
+            <textarea name="content" class="form-input" rows="2"
+                      placeholder="댓글을 입력하세요..." style="flex:1;resize:none;"></textarea>
+            <button type="submit" class="btn btn-primary btn-sm" style="flex-shrink:0;height:38px;">
+              등록
+            </button>
+          </div>
+        </form>
+      </div>
+      {% else %}
+      <div style="padding:16px 22px;text-align:center;font-size:.85rem;color:var(--slate-400);">
+        댓글을 작성하려면 <a href="/login" style="color:var(--blue-600);font-weight:600;">로그인</a>하세요.
+      </div>
+      {% endif %}
+    </div>
+  </main>
+</div>
+{% endblock %}

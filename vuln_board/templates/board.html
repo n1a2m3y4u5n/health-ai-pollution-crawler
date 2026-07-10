@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}게시판{% endblock %}
+
+{% block body %}
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">게시판</div>
+      <nav class="sidebar-nav">
+        <a href="/board" {% if not category %}class="active"{% endif %}>
+          <span class="icon">📋</span> 전체글
+        </a>
+        <a href="/board?category=공지" {% if category=='공지' %}class="active"{% endif %}>
+          <span class="icon">📢</span> 공지사항
+        </a>
+        <a href="/board?category=스터디" {% if category=='스터디' %}class="active"{% endif %}>
+          <span class="icon">📚</span> 스터디
+        </a>
+        <a href="/board?category=질문" {% if category=='질문' %}class="active"{% endif %}>
+          <span class="icon">❓</span> 질문
+        </a>
+        <a href="/board?category=일반" {% if category=='일반' %}class="active"{% endif %}>
+          <span class="icon">💬</span> 자유
+        </a>
+      </nav>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">바로가기</div>
+      <nav class="sidebar-nav">
+        <a href="/search"><span class="icon">🔍</span> 검색</a>
+        <a href="/write"><span class="icon">✏️</span> 글쓰기</a>
+      </nav>
+    </div>
+  </aside>
+
+  <main>
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <h2 class="page-title">{{ category or '전체 게시판' }}</h2>
+      </div>
+      {% if user %}
+      <a href="/write" class="btn btn-primary btn-sm">✏️ 글쓰기</a>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <ul class="post-list">
+        {% for post in posts %}
+        <li class="post-item">
+          {% if post.id in pinned_ids %}
+          <span class="post-pin"></span>
+          {% endif %}
+          <span class="post-category {% if post.category == '공지' %}notice{% endif %}">
+            {{ post.category }}
+          </span>
+          <a href="/post/{{ post.id }}" class="post-title-link">{{ post.title }}</a>
+          <span class="post-meta">
+            <span class="post-author">{{ post.author }}</span>
+            <span>👁 {{ post.views }}</span>
+            <span>{{ post.created_at[:10] }}</span>
+          </span>
+        </li>
+        {% else %}
+        <li style="padding:40px;text-align:center;color:var(--slate-400);">
+          게시글이 없습니다.
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    {% if total_pages > 1 %}
+    <div class="pagination">
+      {% for p in range(1, total_pages + 1) %}
+      <a href="/board?page={{ p }}{% if category %}&category={{ category }}{% endif %}"
+         class="page-btn {% if p == page %}active{% endif %}">{{ p }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}홈{% endblock %}
+
+{% block body %}
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">메뉴</div>
+      <nav class="sidebar-nav">
+        <a href="/" class="active"><span class="icon">🏠</span> 홈</a>
+        <a href="/board"><span class="icon">📋</span> 전체 게시판</a>
+        <a href="/board?category=공지"><span class="icon">📢</span> 공지사항</a>
+        <a href="/board?category=스터디"><span class="icon">📚</span> 스터디</a>
+        <a href="/board?category=질문"><span class="icon">❓</span> 질문 게시판</a>
+        <a href="/board?category=일반"><span class="icon">💬</span> 자유게시판</a>
+        <a href="/search"><span class="icon">🔍</span> 게시글 검색</a>
+      </nav>
+    </div>
+
+    {% if user %}
+    <div class="sidebar-section">
+      <div class="sidebar-title">내 정보</div>
+      <div class="sidebar-stat">
+        <div class="stat-row">
+          <span class="stat-label">닉네임</span>
+          <span class="stat-value">{{ user }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">포인트</span>
+          <span class="stat-value blue">{{ points }}pt</span>
+        </div>
+        <div style="margin-top:8px;">
+          <button id="claimBtn" onclick="claimPoint()" class="btn btn-primary btn-full btn-sm">
+            출석 체크 (+50pt)
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </aside>
+
+  <main>
+    <div style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+                border-radius: var(--radius-lg); padding: 32px 36px;
+                margin-bottom: 20px; color: #fff; position: relative; overflow: hidden;">
+      <div style="position:absolute;top:-20px;right:-20px;width:180px;height:180px;
+                  background:rgba(255,255,255,.06);border-radius:50%;"></div>
+      <div style="position:absolute;bottom:-40px;right:60px;width:120px;height:120px;
+                  background:rgba(255,255,255,.04);border-radius:50%;"></div>
+      <div style="font-size:.8rem;font-weight:700;letter-spacing:.08em;
+                  text-transform:uppercase;opacity:.7;margin-bottom:8px;">
+        자료구조 학습 커뮤니티
+      </div>
+      <h1 style="font-size:1.8rem;font-weight:900;letter-spacing:-1px;
+                 line-height:1.2;margin-bottom:10px;">
+        CS Board에 오신 걸<br>환영합니다 👋
+      </h1>
+      <p style="opacity:.8;font-size:.9rem;max-width:400px;line-height:1.6;">
+        링크드리스트, 스택, 큐, 해시테이블을 함께 공부하는 공간입니다.
+        질문하고 답변하며 같이 성장해요.
+      </p>
+      <div style="margin-top:20px;display:flex;gap:10px;">
+        <a href="/board" style="background:#fff;color:#1e40af;padding:9px 20px;
+           border-radius:8px;font-weight:700;font-size:.88rem;display:inline-block;">
+          게시판 바로가기 →
+        </a>
+        {% if not user %}
+        <a href="/register" style="background:rgba(255,255,255,.15);color:#fff;
+           padding:9px 20px;border-radius:8px;font-weight:600;font-size:.88rem;
+           display:inline-block;border:1px solid rgba(255,255,255,.3);">
+          회원가입
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">최근 게시글</span>
+        <a href="/board" class="btn btn-ghost btn-sm">전체보기</a>
+      </div>
+      <ul class="post-list">
+        {% for post in posts %}
+        <li class="post-item">
+          <span class="post-category {% if post.category == '공지' %}notice{% endif %}">
+            {{ post.category }}
+          </span>
+          <a href="/post/{{ post.id }}" class="post-title-link">{{ post.title }}</a>
+          <span class="post-meta">
+            <span class="post-author">{{ post.author }}</span>
+            <span>👁 {{ post.views }}</span>
+            <span>{{ post.created_at[:10] }}</span>
+          </span>
+        </li>
+        {% else %}
+        <li style="padding:30px;text-align:center;color:var(--slate-400);font-size:.9rem;">
+          등록된 게시글이 없습니다.
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function claimPoint() {
+  const btn = document.getElementById('claimBtn');
+  btn.disabled = true;
+  btn.textContent = '처리 중...';
+  fetch('/point/claim', { method: 'POST' })
+    .then(r => r.json())
+    .then(d => {
+      alert(d.message);
+      if (d.status === 'ok') location.reload();
+      else { btn.disabled = false; btn.textContent = '출석 체크 (+50pt)'; }
+    });
+}
+</script>
+{% endblock %}

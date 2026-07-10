@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}내 프로필{% endblock %}
+
+{% block body %}
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">메뉴</div>
+      <nav class="sidebar-nav">
+        <a href="/"><span class="icon">🏠</span> 홈</a>
+        <a href="/board"><span class="icon">📋</span> 게시판</a>
+        <a href="/profile" class="active"><span class="icon">👤</span> 내 프로필</a>
+        <a href="/write"><span class="icon">✏️</span> 글쓰기</a>
+        {% if is_admin %}<a href="/admin"><span class="icon">⚙️</span> 관리자</a>{% endif %}
+      </nav>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">내 통계</div>
+      <div class="sidebar-stat">
+        <div class="stat-row">
+          <span class="stat-label">포인트</span>
+          <span class="stat-value blue">{{ user_data.points }}pt</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">등급</span>
+          <span class="stat-value">
+            {% if user_data.points >= 300 %}🥇 골드
+            {% elif user_data.points >= 150 %}🥈 실버
+            {% else %}🥉 브론즈{% endif %}
+          </span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">가입일</span>
+          <span class="stat-value" style="font-size:.75rem;">{{ user_data.created_at[:10] }}</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="page-header">
+      <h2 class="page-title">👤 내 프로필</h2>
+      <p class="page-subtitle">계정 정보 및 보안 설정</p>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <span class="card-title">기본 정보</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;">
+          <div style="width:64px;height:64px;background:var(--blue-600);border-radius:50%;
+                      display:flex;align-items:center;justify-content:center;
+                      color:#fff;font-size:1.6rem;font-weight:800;">
+            {{ user[0].upper() }}
+          </div>
+          <div>
+            <div style="font-size:1.1rem;font-weight:800;color:var(--slate-900);">{{ user }}</div>
+            <div style="font-size:.85rem;color:var(--slate-500);">{{ user_data.email or '이메일 미등록' }}</div>
+            {% if user_data.is_admin %}
+            <span class="tag red" style="margin-top:4px;">관리자</span>
+            {% else %}
+            <span class="tag blue" style="margin-top:4px;">일반 회원</span>
+            {% endif %}
+          </div>
+        </div>
+        {% if user_data.bio %}
+        <div style="background:var(--slate-50);border-radius:var(--radius-sm);
+                    padding:12px 14px;font-size:.88rem;color:var(--slate-600);">
+          {{ user_data.bio }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <span class="card-title">보안 설정</span>
+      </div>
+      <div class="card-body">
+        {% if message %}
+        <div class="form-success">✅ {{ message }}</div>
+        {% endif %}
+
+        <form method="POST" action="/profile">
+          <div class="form-group">
+            <label class="form-label">소개글</label>
+            <textarea name="bio" class="form-input" rows="2"
+                      placeholder="자기소개를 입력하세요...">{{ user_data.bio or '' }}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">새 비밀번호</label>
+            <input type="password" name="new_password" class="form-input"
+                   placeholder="변경할 비밀번호 (비워두면 유지)">
+          </div>
+          <button type="submit" class="btn btn-primary">저장하기</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">출석 포인트</span>
+      </div>
+      <div class="card-body">
+        <p style="font-size:.88rem;color:var(--slate-600);margin-bottom:12px;">
+          매일 출석 체크로 50pt를 획득하세요! 현재: <b style="color:var(--blue-600);">{{ user_data.points }}pt</b>
+        </p>
+        <div style="display:flex;gap:10px;">
+          <button id="claimBtn" onclick="claimPoint()" class="btn btn-primary">
+            출석 체크 (+50pt)
+          </button>
+          <button onclick="checkPoints()" class="btn btn-ghost">포인트 확인</button>
+        </div>
+        <div id="pointMsg" style="margin-top:10px;font-size:.85rem;"></div>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function claimPoint() {
+  const btn = document.getElementById('claimBtn');
+  const msg = document.getElementById('pointMsg');
+  btn.disabled = true;
+  btn.textContent = '처리 중...';
+  fetch('/point/claim', { method: 'POST' })
+    .then(r => r.json())
+    .then(d => {
+      msg.textContent = d.message;
+      msg.style.color = d.status === 'ok' ? 'var(--green-500)' : 'var(--red-500)';
+      btn.disabled = false;
+      btn.textContent = '출석 체크 (+50pt)';
+    });
+}
+function checkPoints() {
+  fetch('/point/status')
+    .then(r => r.json())
+    .then(d => {
+      const msg = document.getElementById('pointMsg');
+      msg.textContent = `현재 포인트: ${d.points}pt`;
+      msg.style.color = 'var(--blue-600)';
+    });
+}
+</script>
+{% endblock %}

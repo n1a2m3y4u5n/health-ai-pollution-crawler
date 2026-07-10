@@ -1,0 +1,22 @@
+app = "eicon-monitor"
+primary_region = "nrt"  # Tokyo — 한국과 가장 가까운 fly.io 리전
+
+[build]
+
+[env]
+  DATA_DIR = "/data"
+  # CRON_EXPR = "* * * * *"  # 필요 시 조정 (기본 1분)
+
+# 영속 볼륨 — seen_posts.json 저장용
+[[mounts]]
+  source = "eicon_monitor_data"
+  destination = "/data"
+
+# HTTP 서비스 없음 — 순수 백그라운드 워커
+[processes]
+  app = "node dist/index.js"
+
+# 최소 사양으로 비용 절감
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}글쓰기{% endblock %}
+
+{% block body %}
+<div class="layout-full" style="max-width:780px;">
+  <div class="page-header">
+    <h2 class="page-title">✏️ 글쓰기</h2>
+    <p class="page-subtitle">자료구조 학습 경험을 나눠보세요</p>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="POST" action="/write">
+        <div style="display:grid;grid-template-columns:1fr 160px;gap:12px;margin-bottom:16px;">
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">제목 <span style="color:var(--red-500);">*</span></label>
+            <input type="text" name="title" class="form-input"
+                   placeholder="제목을 입력하세요" maxlength="100">
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">분류</label>
+            <select name="category" class="form-input">
+              <option value="일반">💬 자유</option>
+              <option value="질문">❓ 질문</option>
+              <option value="스터디">📚 스터디</option>
+              <option value="공지">📢 공지</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">본문 <span style="color:var(--red-500);">*</span></label>
+          <textarea name="content" class="form-input" rows="14"
+                    placeholder="내용을 입력하세요..."></textarea>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+          <a href="/board" class="btn btn-ghost">← 취소</a>
+          <button type="submit" class="btn btn-primary">게시하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

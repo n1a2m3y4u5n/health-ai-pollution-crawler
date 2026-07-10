@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}회원가입{% endblock %}
+
+{% block body %}
+<div class="layout-full" style="max-width:460px; padding-top:60px;">
+  <div style="text-align:center; margin-bottom:32px;">
+    <div style="width:52px;height:52px;background:var(--blue-600);border-radius:14px;
+                display:flex;align-items:center;justify-content:center;
+                color:#fff;font-weight:900;font-size:1.3rem;margin:0 auto 16px;">CS</div>
+    <h1 style="font-size:1.5rem;font-weight:800;color:var(--slate-900);">회원가입</h1>
+    <p style="color:var(--slate-500);font-size:.88rem;margin-top:4px;">CS Board 멤버가 되어보세요</p>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      {% if error %}
+      <div class="form-error">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="/register">
+        <div class="form-group">
+          <label class="form-label">아이디 <span style="color:var(--red-500);">*</span></label>
+          <input type="text" name="username" class="form-input"
+                 placeholder="사용할 아이디 (영문, 숫자)" maxlength="20" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label">비밀번호 <span style="color:var(--red-500);">*</span></label>
+          <input type="password" name="password" class="form-input"
+                 placeholder="비밀번호를 입력하세요">
+        </div>
+        <div class="form-group">
+          <label class="form-label">이메일</label>
+          <input type="email" name="email" class="form-input"
+                 placeholder="example@csboard.kr (선택)">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" style="margin-top:4px;">
+          가입하기
+        </button>
+      </form>
+
+      <div class="divider"></div>
+
+      <div style="text-align:center;font-size:.85rem;color:var(--slate-500);">
+        이미 계정이 있으신가요?
+        <a href="/login" style="color:var(--blue-600);font-weight:600;">로그인</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

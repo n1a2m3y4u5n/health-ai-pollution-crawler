@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}관리자 페이지{% endblock %}
+
+{% block body %}
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">관리자 메뉴</div>
+      <nav class="sidebar-nav">
+        <a href="/admin" class="active"><span class="icon">⚙️</span> 대시보드</a>
+        <a href="/board"><span class="icon">📋</span> 게시판</a>
+        <a href="/"><span class="icon">🏠</span> 홈으로</a>
+      </nav>
+    </div>
+  </aside>
+
+  <main>
+    <div class="page-header">
+      <h2 class="page-title">⚙️ 관리자 대시보드</h2>
+      <p class="page-subtitle">사이트 현황 및 회원 관리</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+      <div class="card">
+        <div class="card-body" style="padding:16px 20px;">
+          <div style="font-size:.75rem;font-weight:700;color:var(--slate-400);
+                      text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">전체 회원</div>
+          <div style="font-size:2rem;font-weight:900;color:var(--blue-600);">{{ users|length }}</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:16px 20px;">
+          <div style="font-size:.75rem;font-weight:700;color:var(--slate-400);
+                      text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">전체 게시글</div>
+          <div style="font-size:2rem;font-weight:900;color:var(--blue-600);">{{ posts|length }}</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:16px 20px;">
+          <div style="font-size:.75rem;font-weight:700;color:var(--slate-400);
+                      text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">오늘 방문자</div>
+          <div style="font-size:2rem;font-weight:900;color:var(--blue-600);">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <span class="card-title">회원 목록</span>
+        <span class="tag">{{ users|length }}명</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+          <thead>
+            <tr style="background:var(--slate-50);border-bottom:1px solid var(--slate-200);">
+              <th style="padding:10px 22px;text-align:left;font-size:.75rem;font-weight:700;
+                         color:var(--slate-500);text-transform:uppercase;letter-spacing:.04em;">ID</th>
+              <th style="padding:10px 16px;text-align:left;font-size:.75rem;font-weight:700;
+                         color:var(--slate-500);text-transform:uppercase;letter-spacing:.04em;">아이디</th>
+              <th style="padding:10px 16px;text-align:left;font-size:.75rem;font-weight:700;
+                         color:var(--slate-500);text-transform:uppercase;letter-spacing:.04em;">이메일</th>
+              <th style="padding:10px 16px;text-align:left;font-size:.75rem;font-weight:700;
+                         color:var(--slate-500);text-transform:uppercase;letter-spacing:.04em;">포인트</th>
+              <th style="padding:10px 16px;text-align:left;font-size:.75rem;font-weight:700;
+                         color:var(--slate-500);text-transform:uppercase;letter-spacing:.04em;">권한</th>
+              <th style="padding:10px 16px;text-align:left;font-size:.75rem;font-weight:700;
+                         color:var(--slate-500);text-transform:uppercase;letter-spacing:.04em;">가입일</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr style="border-bottom:1px solid var(--slate-100);">
+              <td style="padding:11px 22px;color:var(--slate-400);font-size:.8rem;">{{ u.id }}</td>
+              <td style="padding:11px 16px;font-weight:600;color:var(--slate-800);">{{ u.username }}</td>
+              <td style="padding:11px 16px;color:var(--slate-500);">{{ u.email or '—' }}</td>
+              <td style="padding:11px 16px;font-weight:600;color:var(--blue-600);">{{ u.points }}pt</td>
+              <td style="padding:11px 16px;">
+                {% if u.is_admin %}
+                <span class="tag red">관리자</span>
+                {% else %}
+                <span class="tag">일반</span>
+                {% endif %}
+              </td>
+              <td style="padding:11px 16px;color:var(--slate-400);font-size:.8rem;">{{ u.created_at[:10] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">최근 게시글</span>
+        <span class="tag">{{ posts|length }}개</span>
+      </div>
+      <ul class="post-list">
+        {% for post in posts %}
+        <li class="post-item">
+          <span class="post-category {% if post.category == '공지' %}notice{% endif %}">
+            {{ post.category }}
+          </span>
+          <a href="/post/{{ post.id }}" class="post-title-link">{{ post.title }}</a>
+          <span class="post-meta">
+            <span class="post-author">{{ post.author }}</span>
+            <span>👁 {{ post.views }}</span>
+            <span>{{ post.created_at[:10] }}</span>
+          </span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </main>
+</div>
+{% endblock %}

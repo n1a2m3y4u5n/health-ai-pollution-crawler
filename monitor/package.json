@@ -1,0 +1,25 @@
+{
+  "name": "eicon-monitor",
+  "version": "1.0.0",
+  "description": "e-ICON 게시판 신규 글 모니터링 및 이메일 알림",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0",
+    "nodemailer": "^6.9.13",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/cheerio": "^0.22.35",
+    "@types/node": "^20.14.0",
+    "@types/nodemailer": "^6.4.15",
+    "@types/node-cron": "^3.0.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
