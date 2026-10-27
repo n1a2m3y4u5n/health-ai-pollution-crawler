@@ -35,7 +35,7 @@
 pip install requests beautifulsoup4
 ```
 
-`config.py`의 API 키(네이버 `NAVER_CLIENT_ID`, `NAVER_CLIENT_SECRET`, 카카오 `KAKAO_REST_API_KEY`)를 본인이 발급한 값으로 채웁니다.
+API 키는 환경변수로 넣습니다. 네이버 `NAVER_CLIENT_ID`, `NAVER_CLIENT_SECRET`, 카카오 `KAKAO_REST_API_KEY`가 필요합니다.
 
 ```bash
 python main_crawl.py         # 수집, data/health_blog_raw.csv 생성

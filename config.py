@@ -1,13 +1,14 @@
 """
 건강정보 AI 오염 실태 연구 - 공통 설정
 """
+import os
 
 # =============================================
 # API 키 설정
 # =============================================
-NAVER_CLIENT_ID     = "hF1s8ZRgkym271YR3jXb"
-NAVER_CLIENT_SECRET = "BnpSRfUHzx"
-KAKAO_REST_API_KEY  = "d758c90fdb1d987a1a3955d9751a4dcf"
+NAVER_CLIENT_ID     = os.environ.get("NAVER_CLIENT_ID", "")
+NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "")
+KAKAO_REST_API_KEY  = os.environ.get("KAKAO_REST_API_KEY", "")
 
 # =============================================
 # 저장 경로
